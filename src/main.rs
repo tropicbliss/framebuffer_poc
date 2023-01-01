@@ -6,8 +6,8 @@ use std::io::Cursor;
 
 fn main() {
     let event_loop = glutin::event_loop::EventLoop::new();
-    let size = LogicalSize::new(400, 300); // The width and height of the pixels (screen_w / pixel_w, screen_h / pixel_h)
-    let scaled_size = LogicalSize::new(400 * 3, 300 * 3); // (screen_w, screen_h)
+    let size = LogicalSize::new(400, 300); // (floor(screen_w / pixel_w), floor(screen_h / pixel_h))
+    let scaled_size = LogicalSize::new(400 * 3, 300 * 3); // (prev_result * pixel_w, prev_result * pixel_h)
     let wb = glutin::window::WindowBuilder::new()
         .with_title("Conway's Game of Life")
         .with_min_inner_size(size)
@@ -21,7 +21,7 @@ fn main() {
     )
     .unwrap()
     .to_rgba8();
-    let image_dimensions = image.dimensions();
+    let image_dimensions = image.dimensions(); // (floor(screen_w / pixel_w), floor(screen_h / pixel_h))
     let aspect_ratio = image_dimensions.1 as f32 / image_dimensions.0 as f32;
     let image =
         glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
